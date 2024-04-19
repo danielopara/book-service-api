@@ -5,6 +5,7 @@ import com.daniel.bookservice.dto.LoginDto;
 import com.daniel.bookservice.dto.RegisterDto;
 import com.daniel.bookservice.model.Auth;
 import com.daniel.bookservice.model.User;
+import com.daniel.bookservice.model.enums.Roles;
 import com.daniel.bookservice.repository.AuthRepository;
 import com.daniel.bookservice.repository.UserRepository;
 import com.daniel.bookservice.response.BaseResponse;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BaseResponse signUp(RegisterDto registerDto) {
+    public BaseResponse userSignUp(RegisterDto registerDto) {
         BaseResponse response = new BaseResponse();
 
         Boolean doesEmailExist = userRepository.existsByEmail(registerDto.getEmail());
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService {
         user.setLastName(registerDto.getLastName());
         user.setEmail(registerDto.getEmail());
         user.setPhoneNumber(registerDto.getPhoneNumber());
+        user.setRole(Roles.USER);
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         Map<String, Object> registerDtoList = new HashMap<>();
@@ -67,6 +69,47 @@ public class UserServiceImpl implements UserService {
         logger.info(String.valueOf(response));
         return response;
     }
+
+    @Override
+    public BaseResponse adminSignUp(RegisterDto registerDto) {
+        BaseResponse response = new BaseResponse();
+
+        Boolean doesEmailExist = userRepository.existsByEmail(registerDto.getEmail());
+        if(doesEmailExist){
+            response.setDescription("Email exists");
+            response.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+
+            return response;
+        }
+        long adminCount = userRepository.countByRole(Roles.ADMIN);
+        if (adminCount >= 2) {
+            response.setDescription("Cannot create more than 2 admins");
+            response.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+
+            return response;
+        }
+        User user = new User();
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setEmail(registerDto.getEmail());
+        user.setPhoneNumber(registerDto.getPhoneNumber());
+        user.setRole(Roles.ADMIN);
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+
+        Map<String, Object> registerDtoList = new HashMap<>();
+        registerDtoList.put("firstName", registerDto.getFirstName());
+        registerDtoList.put("lastName", registerDto.getLastName());
+        registerDtoList.put("email", registerDto.getEmail());
+        registerDtoList.put("phoneNumber", registerDto.getPhoneNumber());
+
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setDescription("User created");
+        response.setData(registerDtoList);
+        userRepository.save(user);
+        logger.info(String.valueOf(response));
+        return response;
+    }
+
     @Override
     public BaseResponse login(LoginDto loginDto) {
         try {

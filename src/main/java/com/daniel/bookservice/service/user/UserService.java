@@ -5,6 +5,7 @@ import com.daniel.bookservice.dto.RegisterDto;
 import com.daniel.bookservice.response.BaseResponse;
 
 public interface UserService {
-    BaseResponse signUp(RegisterDto registerDto);
+    BaseResponse userSignUp(RegisterDto registerDto);
+    BaseResponse adminSignUp(RegisterDto registerDto);
     BaseResponse login(LoginDto loginDto);
 }
