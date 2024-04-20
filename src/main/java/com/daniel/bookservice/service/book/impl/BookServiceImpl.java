@@ -96,4 +96,62 @@ public class BookServiceImpl implements BookService {
             );
         }
     }
+
+    @Override
+    public BaseResponse getBooksByTitleContaining(String title) {
+        try{
+            List<Book> bookTitle = bookRepository.findByTitleContaining(title);
+            if(bookTitle.isEmpty()){
+                return new BaseResponse(
+                        HttpServletResponse.SC_NOT_FOUND,
+                        "Book not found",
+                        title,
+                        "Book not found"
+                );
+            }
+            return new BaseResponse(
+                    HttpServletResponse.SC_OK,
+                    "Book found",
+                    bookTitle,
+                    null
+            );
+        } catch (Exception e){
+            e.printStackTrace();
+            return new BaseResponse(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Error",
+                    e.getMessage(),
+                    e.getCause()
+            );
+        }
+    }
+
+    @Override
+    public BaseResponse getBooksByTitle(String title) {
+        try{
+            List<Book> bookTitle = bookRepository.findByTitle(title);
+            if(bookTitle.isEmpty()){
+                return new BaseResponse(
+                        HttpServletResponse.SC_NOT_FOUND,
+                        "Book not found",
+                        title,
+                        "Book not found"
+                );
+            }
+            return new BaseResponse(
+                    HttpServletResponse.SC_OK,
+                    "Book found",
+                    bookTitle,
+                    null
+            );
+        } catch (Exception e){
+            e.printStackTrace();
+            return new BaseResponse(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Error",
+                    e.getMessage(),
+                    e.getCause()
+            );
+        }
+    }
 }

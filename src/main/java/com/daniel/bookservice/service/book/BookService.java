@@ -7,4 +7,6 @@ public interface BookService {
     BaseResponse addBook (BookDto bookDto);
     BaseResponse getBooks();
     BaseResponse getBookById(Long id);
+    BaseResponse getBooksByTitleContaining(String title);
+    BaseResponse getBooksByTitle(String title);
 }

@@ -60,4 +60,38 @@ public class BookController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/title-containing/{title}")
+    @Operation(method = "GET", summary = "Retrieving books by parameters in title", responses = {
+            @ApiResponse(responseCode = "200", description = "Books retrieved",
+                    content = @Content(schema = @Schema(implementation = Book.class))),
+            @ApiResponse(responseCode = "400", description = "Failed to retrieve book")
+    })
+    ResponseEntity<?> getBooksByTitleContaining(HttpServletRequest request, @PathVariable String title){
+        String requestURI = request.getRequestURI();
+        BaseResponse response = bookService.getBooksByTitleContaining(title);
+        logger.info(requestURI + " Endpoint was used");
+        if(response.getStatusCode() == HttpStatus.OK.value()){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/title/{title}")
+    @Operation(method = "GET", summary = "Retrieving books by title", responses = {
+            @ApiResponse(responseCode = "200", description = "Books retrieved",
+                    content = @Content(schema = @Schema(implementation = Book.class))),
+            @ApiResponse(responseCode = "400", description = "Failed to retrieve book")
+    })
+    ResponseEntity<?> getBooksByTitle(HttpServletRequest request, @PathVariable String title){
+        String requestURI = request.getRequestURI();
+        BaseResponse response = bookService.getBooksByTitle(title);
+        logger.info(requestURI + " Endpoint was used");
+        if(response.getStatusCode() == HttpStatus.OK.value()){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
