@@ -27,6 +27,8 @@ public class Book {
     private BigDecimal amount;
     @Column(name = "description", nullable = false)
     private String description;
+    @Column(name = "ratings", nullable = false)
+    private Double ratings;
     @Column(name = "publicationDate", nullable = false)
     private LocalDate publicationDate;
     @Column(name = "quantityInStock", nullable = false)
