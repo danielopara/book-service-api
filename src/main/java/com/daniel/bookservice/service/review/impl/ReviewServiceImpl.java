@@ -36,6 +36,15 @@ public class ReviewServiceImpl implements ReviewService {
                         "Book not found"
                 );
             }
+
+            if (reviewDto.getRating() < 1 || reviewDto.getRating() > 5) {
+                return new BaseResponse(
+                        HttpServletResponse.SC_BAD_REQUEST,
+                        "Invalid rating",
+                        reviewDto.getRating(),
+                        "Rating cannot be less than 1 or greater than 5"
+                );
+            }
             Book book = bookId.get();
             Review review = Review.builder()
                     .book(book)
@@ -50,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
 
             return new BaseResponse(HttpServletResponse.SC_OK, "Review added", review, null);
         } catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
             return new BaseResponse(
                     HttpServletResponse.SC_BAD_REQUEST,
                     "Error",
