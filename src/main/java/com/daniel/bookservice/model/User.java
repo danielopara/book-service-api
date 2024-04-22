@@ -1,5 +1,6 @@
 package com.daniel.bookservice.model;
 
+import com.daniel.bookservice.model.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,9 @@ public class User implements UserDetails {
     @Column(name= "password")
     @NotBlank
     private String password;
+    @Column(name="role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Roles role;
     @Column(name = "phone_number")
     private String phoneNumber;
 

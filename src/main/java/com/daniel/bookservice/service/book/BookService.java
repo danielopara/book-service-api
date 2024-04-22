@@ -1,4 +1,12 @@
 package com.daniel.bookservice.service.book;
 
-public class BookService {
+import com.daniel.bookservice.dto.BookDto;
+import com.daniel.bookservice.response.BaseResponse;
+
+public interface BookService {
+    BaseResponse addBook (BookDto bookDto);
+    BaseResponse getBooks();
+    BaseResponse getBookById(Long id);
+    BaseResponse getBooksByTitleContaining(String title);
+    BaseResponse getBooksByTitle(String title);
 }

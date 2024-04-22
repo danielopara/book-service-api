@@ -20,14 +20,13 @@ public class SecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             "/v3/api-docs/**", "/configuration/**", "/swagger-ui/**",
             "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/api-docs/**",
-            "api/v1/user/register", "api/v1/user/login"
+            "api/v1/user/register", "api/v1/user/login", "api/v1/admin/register"
     };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests -> requests
-//                        .requestMatchers( "/api/v1/**").permitAll()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
