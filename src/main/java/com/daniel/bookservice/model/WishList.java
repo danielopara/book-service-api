@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,11 +24,11 @@ public class WishList {
     @Column(nullable = false, name = "email")
     private String email;
 //    @JoinColumn(name = "book_id")
-    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "wish_list_books",
             joinColumns = @JoinColumn(name = "wish_list_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
-    private Set<Book> book = new HashSet<>();
+    private List<Book> book = new ArrayList<>();
 }

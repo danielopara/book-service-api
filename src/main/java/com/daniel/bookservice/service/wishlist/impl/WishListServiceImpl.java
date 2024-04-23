@@ -14,9 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 @Service
 public class WishListServiceImpl implements WishListService {
     private final UserRepository userRepository;
@@ -30,42 +29,55 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
+    @Transactional
     public BaseResponse wishABook(Long bookId, String email) {
-        Optional<User> byEmail = userRepository.findByEmail(email);
-        Optional<Book> byId = bookRepository.findById(bookId);
-        if(byEmail.isPresent() && byId.isPresent()){
-            User user = byEmail.get();
-            Book book = byId.get();
+        Optional<Book> book_id = bookRepository.findById(bookId);
+        Optional<User> user_email = userRepository.findByEmail(email);
+        if(user_email.isPresent() && book_id.isPresent()){
+            Book book = book_id.get();
 
-            // Assuming you have a method to get the wishlist by user
-            Optional<WishList> wishListOptional = wishListRepository.findByEmail(email);
-            WishList wishList;
+            Optional<WishList> byEmail = wishListRepository.findByEmail(email);
+            if( byEmail.isPresent()){
+                WishList wishList = byEmail.get();
+                if(wishList.getBook().contains(book)){
+                    return new BaseResponse(
+                            HttpServletResponse.SC_OK,
+                            "Exists already",
+                            null,
+                            null
+                    );
+                } else {
 
-            if (wishListOptional.isPresent()) {
-                wishList = wishListOptional.get();
-                // Add the book to the existing wishlist
-                wishList.getBook().add(book);
+                    wishList.getBook().add(book);
+                    wishListRepository.save(wishList);
+                    return new BaseResponse(
+                            HttpServletResponse.SC_OK,
+                            "Book added to wishlist",
+                            wishList,
+                            null
+                    );
+                }
             } else {
-                // Create a new wishlist if it doesn't exist
-                Set<Book> books = new HashSet<>();
+                List<Book> books = new ArrayList<>();
                 books.add(book);
-                wishList = WishList.builder()
-                        .email(email)
-                        .book(books)
-                        .build();
+                WishList newWishList = new WishList();
+                newWishList.setBook(books);
+                newWishList.setEmail(email);
+                wishListRepository.save(newWishList);
+                return new BaseResponse(
+                        HttpServletResponse.SC_OK,
+                        "Wishlist created and book added",
+                        newWishList,
+                        null
+                );
             }
-
-            // Save the wishlist
-            wishListRepository.save(wishList);
-            return new BaseResponse(HttpStatus.OK.value(),
-                    "Added to wishlist",
-                    wishList,
-                    null);
         }
-        return new BaseResponse(HttpStatus.BAD_REQUEST.value(),
-                "Error",
+        return new BaseResponse(
+                HttpServletResponse.SC_BAD_REQUEST,
+                "User or book not found",
                 null,
-                null);
+                null
+        );
     }
 
     @Override
