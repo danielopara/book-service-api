@@ -1,6 +1,5 @@
 package com.daniel.bookservice.dto;
 
-import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
