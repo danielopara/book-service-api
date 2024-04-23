@@ -2,20 +2,26 @@ package com.daniel.bookservice.controller.book;
 
 
 import com.daniel.bookservice.model.Book;
+import com.daniel.bookservice.model.Review;
+import com.daniel.bookservice.model.WishList;
 import com.daniel.bookservice.response.BaseResponse;
 import com.daniel.bookservice.service.book.impl.BookServiceImpl;
+import com.daniel.bookservice.service.wishlist.impl.WishListServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/book")
@@ -23,10 +29,12 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 public class BookController {
     private final BookServiceImpl bookService;
+    private final WishListServiceImpl wishListService;
     Logger logger = LoggerFactory.getLogger(BookController.class.getName());
 
-    public BookController(BookServiceImpl bookService) {
+    public BookController(BookServiceImpl bookService, WishListServiceImpl wishListService) {
         this.bookService = bookService;
+        this.wishListService = wishListService;
     }
     @GetMapping("")
     @Operation(method = "GET", summary = "Retrieving all books", responses = {
@@ -94,4 +102,7 @@ public class BookController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
 }
+
+

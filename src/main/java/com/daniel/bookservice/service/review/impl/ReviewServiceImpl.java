@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 @Service
@@ -36,6 +38,15 @@ public class ReviewServiceImpl implements ReviewService {
                         "Book not found"
                 );
             }
+
+            if (reviewDto.getRating() < 1 || reviewDto.getRating() > 5) {
+                return new BaseResponse(
+                        HttpServletResponse.SC_BAD_REQUEST,
+                        "Invalid rating",
+                        reviewDto.getRating(),
+                        "Rating cannot be less than 1 or greater than 5"
+                );
+            }
             Book book = bookId.get();
             Review review = Review.builder()
                     .book(book)
@@ -44,19 +55,23 @@ public class ReviewServiceImpl implements ReviewService {
                     .rating(reviewDto.getRating())
                     .build();
             reviewRepository.save(review);
-            Double averageRatingsById = bookRepository.findAverageRatingsById(reviewDto.getBookId());
-            book.setRatings(averageRatingsById);
-            bookRepository.save(book);
 
+            calculateAndUpdateReview(book);
             return new BaseResponse(HttpServletResponse.SC_OK, "Review added", review, null);
         } catch (Exception e){
-            e.printStackTrace();
             return new BaseResponse(
                     HttpServletResponse.SC_BAD_REQUEST,
                     "Error",
                     e.getMessage(),
-                    e.getCause()
+                    e.getCause().toString()
             );
         }
+    }
+
+    private void calculateAndUpdateReview(Book book){
+        Double averageRatingsById = bookRepository.findAverageRatingsById(book.getId());
+        BigDecimal averageRatings = BigDecimal.valueOf(averageRatingsById).setScale(2, RoundingMode.HALF_UP);
+        book.setRatings(averageRatings.doubleValue());
+        bookRepository.save(book);
     }
 }
