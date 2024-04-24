@@ -35,20 +35,20 @@ Reviews from the user on books
 - `review`: `String` The review text.
 - `rating`: `Double` The rating for the book.
 - `email`: `String` The email of the user that made the review.
-- `book`
+- `book`: `Book` It contains the book class. Stores as foreign key.
 
 ### User
 User entity
-- `id` : Long
-- `firstName`
-- `lastName`
-- `email`
-- `password`
-- `role`
-- `phoneNumber`
+- `id` : `Long` The unique identifier of users.
+- `firstName`: `String` The first name of a user.
+- `lastName`: `String` The last name of a user.
+- `email`: `String` The email of the user.
+- `password`: `String` The password of the user which is encrypted.
+- `role`: `ROLE` This is an Enum. It can be ADMIN or USER.
+- `phoneNumber`: `String` The phone number of the user.
 
 ### WishList
 Adding books to wish list
-- `id` : Long
-- `email`
-- `book id`
+- `id` : `Long` The unique identifier of the wishlist.
+- `email`: `String` The email of the user.
+- `book id`: `Book` The book class
