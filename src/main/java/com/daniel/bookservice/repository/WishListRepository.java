@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface WishListRepository extends JpaRepository<WishList, Long> {
     Optional<WishList> findByEmail(String email);
-    boolean existsByEmailAndBookId(String email, Long bookId);
 }
