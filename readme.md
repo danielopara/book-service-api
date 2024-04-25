@@ -52,3 +52,38 @@ Adding books to wish list
 - `id` : `Long` The unique identifier of the wishlist.
 - `email`: `String` The email of the user.
 - `book id`: `Book` The book class
+
+
+## DTOs
+
+### BookDTO
+- `title` : `String`
+- `author` : `String`
+- `genre` : `String`
+- `amount` : `BigDecimal`
+- `description` `String`
+- `publicationDate` : `LocalDate`
+- `quantityInStock` : `Integer`
+### LoginDTO
+-`email` : `email`
+- `password`
+### RegisterDTO
+- `firstName`
+- `lastName`
+- `email`
+- `phoneNumber`
+- `password`
+
+### ReviewDTO
+- `email`
+- `review`
+- `BookID`
+
+### ReviewListDTO
+- `email`
+- `review`
+- `rating`
+- `bookTitle`
+- `creationDate`
+### WishlistDTO
+-`Book`
