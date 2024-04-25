@@ -5,4 +5,6 @@ import com.daniel.bookservice.response.BaseResponse;
 
 public interface ReviewService {
     BaseResponse addReview(ReviewDto reviewDto);
+    BaseResponse getReviewsByEmail(String email);
+    BaseResponse getAllReviews();
 }

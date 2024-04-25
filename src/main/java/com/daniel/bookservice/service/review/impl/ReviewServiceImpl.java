@@ -1,6 +1,7 @@
 package com.daniel.bookservice.service.review.impl;
 
 import com.daniel.bookservice.dto.ReviewDto;
+import com.daniel.bookservice.dto.ReviewListDto;
 import com.daniel.bookservice.model.Book;
 import com.daniel.bookservice.model.Review;
 import com.daniel.bookservice.repository.BookRepository;
@@ -13,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -64,6 +67,80 @@ public class ReviewServiceImpl implements ReviewService {
                     "Error",
                     e.getMessage(),
                     e.getCause().toString()
+            );
+        }
+    }
+
+    @Override
+    public BaseResponse getReviewsByEmail(String email) {
+        try{
+//            ReviewDto dto = new ReviewDto();
+            List<Review> userEmail = reviewRepository.findByEmail(email);
+            if(userEmail.isEmpty()){
+                return new BaseResponse(
+                        HttpServletResponse.SC_NOT_FOUND,
+                        "No reviews for this user",
+                        null,
+                        null
+                );
+            }
+            Stream<ReviewListDto> reviewListDtoStream = userEmail.stream()
+                    .map(review -> new ReviewListDto(
+                            review.getEmail(),
+                            review.getReview(),
+                            review.getRating(),
+                            review.getBook().getTitle(),
+                            review.getCreatedAT()
+                    ));
+            return new BaseResponse(
+                    HttpServletResponse.SC_OK,
+                    "Reviews for user: " + email,
+                    reviewListDtoStream,
+                    null
+            );
+        } catch (Exception e){
+            return new BaseResponse(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Error",
+                    null,
+                    e.getMessage()
+            );
+        }
+    }
+
+    @Override
+    public BaseResponse getAllReviews() {
+        try{
+            List<Review> reviews = reviewRepository.findAll();
+            if(reviews.isEmpty()){
+                return new BaseResponse(
+                        HttpServletResponse.SC_NOT_FOUND,
+                        "No reviews",
+                        null,
+                        null
+                );
+            }
+            Stream<ReviewListDto> reviewListDtoStream = reviews.stream()
+                    .map(review -> new ReviewListDto(
+                            review.getEmail(),
+                            review.getReview(),
+                            review.getRating(),
+                            review.getBook().getTitle(),
+                            review.getCreatedAT()
+                    ));
+            return new BaseResponse(
+                    HttpServletResponse.SC_OK,
+                    "Reviews",
+                    reviewListDtoStream,
+                    null
+            );
+
+        }catch (Exception e){
+            return new BaseResponse(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Error",
+                    null,
+                    e.getMessage()
             );
         }
     }
