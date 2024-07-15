@@ -28,10 +28,15 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
     private final ReviewServiceImpl reviewService;
     Logger logger = LoggerFactory.getLogger(ReviewController.class.getName());
+    private void setLoggerInfo(HttpServletRequest request){
+        logger.info("{} Endpoint was used", request.getRequestURI());
+    }
 
     public ReviewController(ReviewServiceImpl reviewService) {
         this.reviewService = reviewService;
     }
+
+
 
     @PostMapping("/add-review")
     @Operation(method = "POST", summary = "Adds a review", responses = {
@@ -40,8 +45,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "400", description = "Failed to add review")
     })
     ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto, HttpServletRequest request){
-        String requestURI = request.getRequestURI();
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         BaseResponse response = reviewService.addReview(reviewDto);
         if(response.getStatusCode() == HttpServletResponse.SC_OK){
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -57,9 +61,8 @@ public class ReviewController {
             @ApiResponse(responseCode = "400", description = "Failed to retrieve book")
     })
     ResponseEntity<?> getReviewsByEmail(HttpServletRequest request, @PathVariable String email){
-        String requestURI = request.getRequestURI();
+        setLoggerInfo(request);
         BaseResponse response = reviewService.getReviewsByEmail(email);
-        logger.info(requestURI + " Endpoint was used");
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {
@@ -74,9 +77,8 @@ public class ReviewController {
             @ApiResponse(responseCode = "400", description = "Failed to retrieve book")
     })
     ResponseEntity<?> getAllReviews(HttpServletRequest request){
-        String requestURI = request.getRequestURI();
         BaseResponse response = reviewService.getAllReviews();
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {

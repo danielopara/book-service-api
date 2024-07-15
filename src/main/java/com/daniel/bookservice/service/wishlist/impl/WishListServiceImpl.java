@@ -93,7 +93,7 @@ public class WishListServiceImpl implements WishListService {
                         null
                 );
             }
-            byEmail.get().getBook().size();
+            int size = byEmail.get().getBook().size();
             WishListDto dto = WishListDto.builder()
                     .book(byEmail.get().getBook())
                     .build();

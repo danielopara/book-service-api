@@ -29,12 +29,15 @@ import java.util.Optional;
 @CrossOrigin("*")
 public class BookController {
     private final BookServiceImpl bookService;
-    private final WishListServiceImpl wishListService;
+//    private final WishListServiceImpl wishListService;
     Logger logger = LoggerFactory.getLogger(BookController.class.getName());
 
-    public BookController(BookServiceImpl bookService, WishListServiceImpl wishListService) {
+    private void setLoggerInfo(HttpServletRequest request){
+        logger.info("{} Endpoint was used", request.getRequestURI());
+    }
+
+    public BookController(BookServiceImpl bookService) {
         this.bookService = bookService;
-        this.wishListService = wishListService;
     }
     @GetMapping("")
     @Operation(method = "GET", summary = "Retrieving all books", responses = {
@@ -43,9 +46,10 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Failed to retrieve all books")
     })
     ResponseEntity<?> getAllBooks(HttpServletRequest request){
-        String requestURI = request.getRequestURI();
+//        String requestURI = request.getRequestURI();
         BaseResponse response = bookService.getBooks();
-        logger.info(requestURI + " Endpoint was used");
+//        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {
@@ -59,9 +63,11 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Failed to retrieve book")
     })
     ResponseEntity<?> getBookById(HttpServletRequest request, @PathVariable Long id){
-        String requestURI = request.getRequestURI();
+//        String requestURI = request.getRequestURI();
+//        logger.info(requestURI + " Endpoint was used");
+
         BaseResponse response = bookService.getBookById(id);
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {
@@ -76,9 +82,10 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Failed to retrieve book")
     })
     ResponseEntity<?> getBooksByTitleContaining(HttpServletRequest request, @PathVariable String title){
-        String requestURI = request.getRequestURI();
+//        String requestURI = request.getRequestURI();
+//        logger.info(requestURI + " Endpoint was used");
         BaseResponse response = bookService.getBooksByTitleContaining(title);
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {
@@ -93,9 +100,10 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Failed to retrieve book")
     })
     ResponseEntity<?> getBooksByTitle(HttpServletRequest request, @PathVariable String title){
-        String requestURI = request.getRequestURI();
+//        String requestURI = request.getRequestURI();
+//        logger.info(requestURI + " Endpoint was used");
         BaseResponse response = bookService.getBooksByTitle(title);
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {

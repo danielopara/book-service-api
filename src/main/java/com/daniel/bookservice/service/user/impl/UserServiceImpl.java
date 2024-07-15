@@ -10,6 +10,7 @@ import com.daniel.bookservice.repository.AuthRepository;
 import com.daniel.bookservice.repository.UserRepository;
 import com.daniel.bookservice.response.BaseResponse;
 import com.daniel.bookservice.service.user.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,41 @@ public class UserServiceImpl implements UserService {
         this.authRepository = authRepository;
     }
 
+
+    // useful methods
+
+    private User createUser(RegisterDto registerDto, Roles role){
+        User user = new User();
+
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(registerDto.getPassword());
+        user.setRole(role);
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+
+        return user;
+    }
+
+    private Map<String, Object> userToDto(User user){
+        Map<String, Object> registerDtoList = new HashMap<>();
+        registerDtoList.put("firstName", user.getFirstName());
+        registerDtoList.put("lastName", user.getLastName());
+        registerDtoList.put("email", user.getEmail());
+        registerDtoList.put("phoneNumber", user.getPhoneNumber());
+
+        return registerDtoList;
+    }
+
+    private BaseResponse createSuccessfulResponse(String description, Object data){
+        BaseResponse response = new BaseResponse();
+        response.setStatusCode(HttpServletResponse.SC_OK);
+        response.setData(data);
+        response.setDescription(description);
+
+        return response;
+    }
+
     @Override
     public BaseResponse userSignUp(RegisterDto registerDto) {
         BaseResponse response = new BaseResponse();
@@ -48,26 +84,43 @@ public class UserServiceImpl implements UserService {
 
             return response;
         }
-        User user = new User();
-        user.setFirstName(registerDto.getFirstName());
-        user.setLastName(registerDto.getLastName());
-        user.setEmail(registerDto.getEmail());
-        user.setPhoneNumber(registerDto.getPhoneNumber());
-        user.setRole(Roles.USER);
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
-        Map<String, Object> registerDtoList = new HashMap<>();
-        registerDtoList.put("firstName", registerDto.getFirstName());
-        registerDtoList.put("lastName", registerDto.getLastName());
-        registerDtoList.put("email", registerDto.getEmail());
-        registerDtoList.put("phoneNumber", registerDto.getPhoneNumber());
+        if(registerDto.getPhoneNumber().length() < 11){
+            response.setDescription("phone number is less than 11 digits");
+            response.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
 
-        response.setStatusCode(HttpStatus.OK.value());
-        response.setDescription("User created");
-        response.setData(registerDtoList);
+            return  response;
+        }
+        if(registerDto.getPhoneNumber().length() > 11){
+            response.setDescription("phone number is greater than 11 digits");
+            response.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+
+            return response;
+        }
+
+        User user = createUser(registerDto, Roles.USER);
+
+//        User user = new User();
+//        user.setFirstName(registerDto.getFirstName());
+//        user.setLastName(registerDto.getLastName());
+//        user.setEmail(registerDto.getEmail());
+//        user.setPhoneNumber(registerDto.getPhoneNumber());
+//        user.setRole(Roles.USER);
+//        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+
+//        Map<String, Object> registerDtoList = new HashMap<>();
+//        registerDtoList.put("firstName", registerDto.getFirstName());
+//        registerDtoList.put("lastName", registerDto.getLastName());
+//        registerDtoList.put("email", registerDto.getEmail());
+//        registerDtoList.put("phoneNumber", registerDto.getPhoneNumber());
+
+//        response.setStatusCode(HttpStatus.OK.value());
+//        response.setDescription("User created");
+//        response.setData(userToDto(user));
         userRepository.save(user);
         logger.info(String.valueOf(response));
-        return response;
+
+        return createSuccessfulResponse("User created", userToDto(user));
     }
 
     @Override
@@ -144,7 +197,7 @@ public class UserServiceImpl implements UserService {
             logger.error(String.valueOf(response));
             return response;
         }catch (Exception e){
-            return new BaseResponse(HttpStatus.BAD_REQUEST.value(), "Authentication Failed", null, e.getMessage());
+                return new BaseResponse(HttpStatus.BAD_REQUEST.value(), "Authentication Failed", null, e.getMessage());
         }
     }
 }

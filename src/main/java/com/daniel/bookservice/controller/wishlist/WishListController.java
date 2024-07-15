@@ -30,6 +30,10 @@ public class WishListController{
     private final WishListServiceImpl wishListService;
     Logger logger = LoggerFactory.getLogger(WishListController.class.getName());
 
+    private void setLoggerInfo(HttpServletRequest request){
+        logger.info("{} Endpoint was used", request.getRequestURI());
+    }
+
     public WishListController(WishListServiceImpl wishListService) {
         this.wishListService = wishListService;
     }
@@ -40,8 +44,7 @@ public class WishListController{
             @ApiResponse(responseCode = "400", description = "Failed to add book")
     })
     ResponseEntity<?> addReview(@RequestBody WishBookRequest wishBookRequest, HttpServletRequest request){
-        String requestURI = request.getRequestURI();
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         BaseResponse response = wishListService.wishABook(wishBookRequest.getBookId(),
                 wishBookRequest.getEmail());
         if(response.getStatusCode() == HttpServletResponse.SC_OK){
@@ -58,9 +61,8 @@ public class WishListController{
             @ApiResponse(responseCode = "400", description = "Failed to retrieve wishlist")
     })
     ResponseEntity<?> getWishListByEmail(HttpServletRequest request, @PathVariable String email){
-        String requestURI = request.getRequestURI();
         BaseResponse response = wishListService.getWishListByEmail(email);
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         if(response.getStatusCode() == HttpServletResponse.SC_OK){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {

@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserServiceImpl userService;
     Logger logger = LoggerFactory.getLogger(UserController.class.getName());
+    private void setLoggerInfo(HttpServletRequest request){
+        logger.info("{} Endpoint was used", request.getRequestURI());
+    }
 
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
@@ -44,8 +47,7 @@ public class UserController {
     })
 
     ResponseEntity<?> register(@RequestBody RegisterDto registerDto, HttpServletRequest request){
-        String requestURI = request.getRequestURI();
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         BaseResponse response = userService.userSignUp(registerDto);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -64,8 +66,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Failed to login")
     })
     ResponseEntity<?> login(@RequestBody LoginDto loginDto, HttpServletRequest request){
-        String requestURI = request.getRequestURI();
-        logger.info(requestURI + " Endpoint was used");
+        setLoggerInfo(request);
         BaseResponse response = userService.login(loginDto);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);

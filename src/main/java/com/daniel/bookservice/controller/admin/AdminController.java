@@ -31,6 +31,10 @@ public class AdminController {
 
     Logger logger = LoggerFactory.getLogger(AdminController.class.getName());
 
+    private void setLoggerInfo(HttpServletRequest request){
+        logger.info("{} Endpoint was used", request.getRequestURI());
+    }
+
     public AdminController(UserServiceImpl userService, BookServiceImpl bookService, JwtService jwtService) {
         this.userService = userService;
         this.bookService = bookService;
@@ -51,8 +55,12 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Failed to register a user")
     })
     ResponseEntity<?> register(@RequestBody RegisterDto registerDto, HttpServletRequest request){
-        String requestURI = request.getRequestURI();
-        logger.info(requestURI + " Endpoint was used");
+//        String requestURI = request.getRequestURI();
+//        logger.info("{} Endpoint was used", requestURI);
+
+        setLoggerInfo(request);
+
+
         BaseResponse response = userService.adminSignUp(registerDto);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -85,8 +93,10 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
 
-        String requestURI = request.getRequestURI();
-        logger.info(requestURI + " Endpoint was used");
+//        String requestURI = request.getRequestURI();
+//        logger.info("{} Endpoint was used", requestURI);
+        setLoggerInfo(request);
+
         BaseResponse response = bookService.addBook(bookDto);
         if(response.getStatusCode() == HttpStatus.OK.value()){
             return new ResponseEntity<>(response, HttpStatus.OK);

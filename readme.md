@@ -66,7 +66,7 @@ Adding books to wish list
 - `quantityInStock` : `Integer`
 ### LoginDTO
 -`email` : `email`
-- `password`
+- `password` : `String`
 ### RegisterDTO
 - `firstName`
 - `lastName`
