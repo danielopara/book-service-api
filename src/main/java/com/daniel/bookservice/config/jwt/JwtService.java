@@ -45,7 +45,7 @@ public class JwtService {
 
     private String generateToken(Map<String, Object> getDetails, UserDetails userDetails){
         Optional<User> user = userRepository.findByEmail(userDetails.getUsername());
-        if(!user.isPresent()){
+        if(user.isEmpty()){
             return "error";
         }
         Roles role = user.get().getRole();
